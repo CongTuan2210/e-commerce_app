@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  StyleSheet,
+} from "react-native";
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { UserType } from "../UserContext";
@@ -39,30 +46,33 @@ const ConfirmationScreen = () => {
   const total = cart
     ?.map((item) => item.price * item.quantity)
     .reduce((curr, prev) => curr + prev, 0);
-  const navigation = useNavigation()
-  const dispatch = useDispatch()
-  const handlePlaceOrder = async() => {
-    try { 
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const handlePlaceOrder = async () => {
+    try {
       const orderData = {
         userId: userId,
         cartItems: cart,
         totalPrice: total,
         shippingAddress: selectedAddress,
-        paymentMethod: selectedOption
-      }
+        paymentMethod: selectedOption,
+      };
 
-      const response = await axios.post("http://10.0.2.2:8000/orders",orderData)
-      if(response.status === 200) {
-        navigation.navigate("Order")
-        dispatch(cleanCart())
-        console.log("Order created successfully", response.data.order)
+      const response = await axios.post(
+        "http://10.0.2.2:8000/orders",
+        orderData
+      );
+      if (response.status === 200) {
+        navigation.navigate("Order");
+        dispatch(cleanCart());
+        console.log("Order created successfully", response.data.order);
       } else {
-        console.log("Error creating order: ",response.data)
+        console.log("Error creating order: ", response.data);
       }
     } catch (error) {
-      console.log("Error: ",error)
+      console.log("Error: ", error);
     }
-  }
+  };
   // const pay = async() => {
   //   try {
   //     const options = {
@@ -105,82 +115,46 @@ const ConfirmationScreen = () => {
   //   }
   // }
   return (
-    <ScrollView style={{}}>
-      <View style={{ flex: 1, paddingHorizontal: 20, paddingTop: 40 }}>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginBottom: 20,
-            justifyContent: "space-between",
-          }}
-        >
+    <ScrollView>
+      <View style={styles.container}>
+        <View style={styles.step}>
           {steps?.map((step, index) => (
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <View style={styles.step_container}>
               {index > 0 && (
                 <View
                   style={[
-                    { flex: 1, height: 2, backgroundColor: "green" },
+                    styles.step_detail,
                     index <= currentStep && { backgroundColor: "green" },
                   ]}
                 />
               )}
               <View
                 style={[
-                  {
-                    width: 30,
-                    height: 30,
-                    borderRadius: 15,
-                    backgroundColor: "#CCC",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  },
+                  styles.step_complete,
                   index < currentStep && { backgroundColor: "green" },
                 ]}
               >
                 {index < currentStep ? (
-                  <Text
-                    style={{ fontSize: 16, fontWeight: "bold", color: "#FFF" }}
-                  >
-                    &#10003;
-                  </Text>
+                  <Text style={styles.check_index}>&#10003;</Text>
                 ) : (
-                  <Text
-                    style={{ fontSize: 16, fontWeight: "bold", color: "#FFF" }}
-                  >
-                    {index + 1}
-                  </Text>
+                  <Text style={styles.check_index}>{index + 1}</Text>
                 )}
               </View>
-              <Text style={{ textAlign: "center", marginTop: 8 }}>
-                {step.title}
-              </Text>
+              <Text style={styles.step_title}>{step.title}</Text>
             </View>
           ))}
         </View>
       </View>
 
       {currentStep == 0 && (
-        <View style={{ marginHorizontal: 20 }}>
-          <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+        <View style={styles.current_step_container}>
+          <Text style={styles.current_step0_option}>
             Select Delivery Address
           </Text>
 
           <TouchableOpacity>
             {addresses?.map((item, index) => (
-              <TouchableOpacity
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#D0D0D0",
-                  padding: 10,
-                  flexDirection: "row",
-                  gap: 5,
-                  paddingBottom: 17,
-                  marginVertical: 7,
-                  alignItems: "center",
-                  borderRadius: 6,
-                }}
-              >
+              <TouchableOpacity style={styles.btn_choose_address}>
                 {selectedAddress && selectedAddress._id === item?._id ? (
                   <FontAwesome5 name="dot-circle" size={24} color="#008397" />
                 ) : (
@@ -192,84 +166,40 @@ const ConfirmationScreen = () => {
                   />
                 )}
 
-                <View style={{ marginLeft: 6 }}>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 3,
-                    }}
-                  >
-                    <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                      {item?.name}
-                    </Text>
+                <View style={styles.address_positon}>
+                  <View style={styles.address_info}>
+                    <Text style={styles.address_name}>{item?.name}</Text>
                     <Entypo name="location-pin" size={24} color="red" />
                   </View>
 
-                  <Text style={{ fontSize: 15, color: "#181818" }}>
+                  <Text style={styles.address_info_other}>
                     {item?.houseNo}, {item?.landmark}
                   </Text>
 
-                  <Text style={{ fontSize: 15, color: "#181818" }}>
-                    {item?.street}
-                  </Text>
+                  <Text style={styles.address_info_other}>{item?.street}</Text>
 
-                  <Text style={{ fontSize: 15, color: "#181818" }}>
+                  <Text style={styles.address_info_other}>
                     Vietnam, Ho Chi Minh
                   </Text>
 
-                  <Text style={{ fontSize: 15, color: "#181818" }}>
+                  <Text style={styles.address_info_other}>
                     Phone No: {item?.mobileNo}
                   </Text>
 
-                  <Text style={{ fontSize: 15, color: "#181818" }}>
+                  <Text style={styles.address_info_other}>
                     Pin code: {item?.postalCode}
                   </Text>
 
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 10,
-                      marginTop: 7,
-                    }}
-                  >
-                    <TouchableOpacity
-                      style={{
-                        backgroundColor: "#F5F5F5",
-                        paddingHorizontal: 10,
-                        paddingVertical: 6,
-                        borderRadius: 5,
-                        borderWidth: 0.9,
-                        borderColor: "#D0D0D0",
-                      }}
-                    >
+                  <View style={styles.handle_address}>
+                    <TouchableOpacity style={styles.handle_btn}>
                       <Text>Edit</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity
-                      style={{
-                        backgroundColor: "#F5F5F5",
-                        paddingHorizontal: 10,
-                        paddingVertical: 6,
-                        borderRadius: 5,
-                        borderWidth: 0.9,
-                        borderColor: "#D0D0D0",
-                      }}
-                    >
+                    <TouchableOpacity style={styles.handle_btn}>
                       <Text>Remove</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity
-                      style={{
-                        backgroundColor: "#F5F5F5",
-                        paddingHorizontal: 10,
-                        paddingVertical: 6,
-                        borderRadius: 5,
-                        borderWidth: 0.9,
-                        borderColor: "#D0D0D0",
-                      }}
-                    >
+                    <TouchableOpacity style={styles.handle_btn}>
                       <Text>Set as Default</Text>
                     </TouchableOpacity>
                   </View>
@@ -278,16 +208,9 @@ const ConfirmationScreen = () => {
                     {selectedAddress && selectedAddress._id === item._id && (
                       <TouchableOpacity
                         onPress={() => setCurrentStep(1)}
-                        style={{
-                          backgroundColor: "#008397",
-                          padding: 10,
-                          borderRadius: 20,
-                          justifyContent: "center",
-                          alignItems: "center",
-                          marginTop: 10,
-                        }}
+                        style={styles.deliver_btn}
                       >
-                        <Text style={{ textAlign: "center", color: "#FFF" }}>
+                        <Text style={styles.deliver_btn_text}>
                           Deliver to this Address
                         </Text>
                       </TouchableOpacity>
@@ -301,23 +224,12 @@ const ConfirmationScreen = () => {
       )}
 
       {currentStep === 1 && (
-        <View style={{ marginHorizontal: 20 }}>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+        <View style={styles.current_step_container}>
+          <Text style={styles.delivery_step_text}>
             Choose your delivery options
           </Text>
 
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              backgroundColor: "#FFF",
-              padding: 8,
-              gap: 7,
-              borderColor: "#D0D0D0",
-              borderWidth: 1,
-              marginTop: 10,
-            }}
-          >
+          <View style={styles.delivery_step_container}>
             {option ? (
               <FontAwesome5 name="dot-circle" size={24} color="#008397" />
             ) : (
@@ -328,8 +240,8 @@ const ConfirmationScreen = () => {
                 color="gray"
               />
             )}
-            <Text style={{ flex: 1 }}>
-              <Text style={{ color: "green", fontWeight: "500" }}>
+            <Text style={styles.delivery_step_content}>
+              <Text style={styles.delivery_step_text_bold}>
                 Tomorrow by 10pm
               </Text>{" "}
               - FREE delivery with your Prime membership
@@ -338,14 +250,7 @@ const ConfirmationScreen = () => {
 
           <TouchableOpacity
             onPress={() => setCurrentStep(2)}
-            style={{
-              backgroundColor: "#FFC72C",
-              padding: 10,
-              borderRadius: 20,
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: 15,
-            }}
+            style={styles.btn_continue}
           >
             <Text>Continue</Text>
           </TouchableOpacity>
@@ -353,23 +258,10 @@ const ConfirmationScreen = () => {
       )}
 
       {currentStep === 2 && (
-        <View style={{ marginHorizontal: 20 }}>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-            Select your payment Method
-          </Text>
+        <View style={styles.current_step_container}>
+          <Text style={styles.payment_title}>Select your payment Method</Text>
 
-          <View
-            style={{
-              backgroundColor: "#FFF",
-              padding: 8,
-              borderColor: "#D0D0D0",
-              borderWidth: 1,
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 7,
-              marginTop: 12,
-            }}
-          >
+          <View style={styles.cash_on_deliver}>
             {selectedOption === "cash" ? (
               <FontAwesome5 name="dot-circle" size={24} color="#008379" />
             ) : (
@@ -384,24 +276,13 @@ const ConfirmationScreen = () => {
             <Text>Cash on Deliver</Text>
           </View>
 
-          <View
-            style={{
-              backgroundColor: "#FFF",
-              padding: 8,
-              borderColor: "#D0D0D0",
-              borderWidth: 1,
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 7,
-              marginTop: 12,
-            }}
-          >
+          <View style={styles.cash_on_deliver}>
             {selectedOption === "card" ? (
               <FontAwesome5 name="dot-circle" size={24} color="#008379" />
             ) : (
               <Entypo
                 onPress={() => {
-                  setSelectedOption("card")
+                  setSelectedOption("card");
                   Alert.alert(
                     "Coming Soon!",
                     "We will launch this service soon!",
@@ -409,8 +290,8 @@ const ConfirmationScreen = () => {
                       {
                         text: "OK",
                         onPress: () => {
-                          console.log("OK PAYMENT ONLINE")
-                          setSelectedOption(null)
+                          console.log("OK PAYMENT ONLINE");
+                          setSelectedOption(null);
                         },
                       },
                     ]
@@ -427,14 +308,7 @@ const ConfirmationScreen = () => {
 
           <TouchableOpacity
             onPress={() => setCurrentStep(3)}
-            style={{
-              backgroundColor: "#FFC72C",
-              padding: 10,
-              borderRadius: 20,
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: 15,
-            }}
+            style={styles.btn_continue}
           >
             <Text>Continue</Text>
           </TouchableOpacity>
@@ -442,27 +316,15 @@ const ConfirmationScreen = () => {
       )}
 
       {currentStep === 3 && selectedOption === "cash" && (
-        <View style={{ marginHorizontal: 20 }}>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Order Now</Text>
+        <View style={styles.current_step_container}>
+          <Text style={styles.order_title}>Order Now</Text>
 
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 8,
-              backgroundColor: "#FFF",
-              padding: 8,
-              borderColor: "#D0D0D0",
-              borderWidth: 1,
-              marginTop: 10,
-            }}
-          >
+          <View style={styles.order_container}>
             <View>
-              <Text style={{ fontSize: 17, fontWeight: "bold" }}>
+              <Text style={styles.order_content}>
                 Save 5% and never run out
               </Text>
-              <Text style={{ fontSize: 15, color: "gray", marginTop: 5 }}>
+              <Text style={styles.order_content_text}>
                 Turn on auto deliveries
               </Text>
             </View>
@@ -474,87 +336,34 @@ const ConfirmationScreen = () => {
             />
           </View>
 
-          <View
-            style={{
-              backgroundColor: "#FFF",
-              padding: 10,
-              borderColor: "#D0D0D0",
-              borderWidth: 1,
-              marginTop: 10,
-            }}
-          >
+          <View style={styles.ship_info}>
             <Text>Shipping to {selectedAddress?.name}</Text>
 
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text style={{ fontSize: 16, fontWeight: "500", color: "gray" }}>
-                Items
-              </Text>
-              <Text style={{ fontSize: 16, color: "gray" }}>${total}</Text>
+            <View style={styles.info_item}>
+              <Text style={styles.items}>Items</Text>
+              <Text style={styles.ship_total}>${total}</Text>
             </View>
 
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text style={{ fontSize: 16, fontWeight: "500", color: "gray" }}>
-                Delivery
-              </Text>
-              <Text style={{ fontSize: 16, color: "gray" }}>$0</Text>
+            <View style={styles.delivery_money}>
+              <Text style={styles.deliver}>Delivery</Text>
+              <Text style={styles.money_style}>$0</Text>
             </View>
 
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                Order Total
-              </Text>
-              <Text
-                style={{ fontSize: 16, color: "#C60C30", fontWeight: "bold" }}
-              >
-                ${total}
-              </Text>
+            <View style={styles.order_total}>
+              <Text style={styles.order_total_text}>Order Total</Text>
+              <Text style={styles.total_price}>${total}</Text>
             </View>
           </View>
 
-          <View
-            style={{
-              backgroundColor: "#FFF",
-              padding: 8,
-              borderColor: "#D0D0D0",
-              borderWidth: 1,
-              marginTop: 10,
-            }}
-          >
-            <Text style={{ fontSize: 16, color: "gray" }}>Pay with</Text>
+          <View style={styles.payment_method}>
+            <Text style={styles.payment_method_text}>Pay with</Text>
 
-            <Text style={{ fontSize: 16, fontWeight: "600", marginTop: 7 }}>
-              Pay on delivery (Cash)
-            </Text>
+            <Text style={styles.payment_delivery}>Pay on delivery (Cash)</Text>
           </View>
 
           <TouchableOpacity
             onPress={handlePlaceOrder}
-            style={{
-              backgroundColor: "#FFC72C",
-              padding: 10,
-              borderRadius: 20,
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop:20
-            }}
+            style={styles.accept}
           >
             <Text>Place your order</Text>
           </TouchableOpacity>
@@ -565,3 +374,243 @@ const ConfirmationScreen = () => {
 };
 
 export default ConfirmationScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 40,
+  },
+  step: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+    justifyContent: "space-between",
+  },
+  step_container: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  step_detail: {
+    flex: 1,
+    height: 2,
+    backgroundColor: "green",
+  },
+  step_complete: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: "#CCC",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  check_index: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#FFF",
+  },
+  step_title: {
+    textAlign: "center",
+    marginTop: 8,
+  },
+  current_step_container: {
+    marginHorizontal: 20,
+  },
+  current_step0_option: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  btn_choose_address: {
+    borderWidth: 1,
+    borderColor: "#D0D0D0",
+    padding: 10,
+    flexDirection: "row",
+    gap: 5,
+    paddingBottom: 17,
+    marginVertical: 7,
+    alignItems: "center",
+    borderRadius: 6,
+  },
+  address_positon: {
+    marginLeft: 6,
+  },
+  address_info: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+  },
+  address_name: {
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+  address_info_other: {
+    fontSize: 15,
+    color: "#181818",
+  },
+  handle_address: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginTop: 7,
+  },
+  handle_btn: {
+    backgroundColor: "#F5F5F5",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 5,
+    borderWidth: 0.9,
+    borderColor: "#D0D0D0",
+  },
+  deliver_btn: {
+    backgroundColor: "#008397",
+    padding: 10,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  deliver_btn_text: {
+    textAlign: "center",
+    color: "#FFF",
+  },
+  delivery_step_text: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  delivery_step_container: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFF",
+    padding: 8,
+    gap: 7,
+    borderColor: "#D0D0D0",
+    borderWidth: 1,
+    marginTop: 10,
+  },
+  delivery_step_content: {
+    flex: 1,
+  },
+  delivery_step_text_bold: {
+    color: "green",
+    fontWeight: "500",
+  },
+  btn_continue: {
+    backgroundColor: "#FFC72C",
+    padding: 10,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 15,
+  },
+  payment_title: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  cash_on_deliver: {
+    backgroundColor: "#FFF",
+    padding: 8,
+    borderColor: "#D0D0D0",
+    borderWidth: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 7,
+    marginTop: 12,
+  },
+  order_title: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  order_container: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+    backgroundColor: "#FFF",
+    padding: 8,
+    borderColor: "#D0D0D0",
+    borderWidth: 1,
+    marginTop: 10,
+  },
+  order_content: {
+    fontSize: 17,
+    fontWeight: "bold",
+  },
+  order_content_text: {
+    fontSize: 15,
+    color: "gray",
+    marginTop: 5,
+  },
+  ship_info: {
+    backgroundColor: "#FFF",
+    padding: 10,
+    borderColor: "#D0D0D0",
+    borderWidth: 1,
+    marginTop: 10,
+  },
+  info_item: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  items: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "gray",
+  },
+  ship_total: {
+    fontSize: 16,
+    color: "gray",
+  },
+  delivery_money: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  deliver: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "gray",
+  },
+  money_style: {
+    fontSize: 16,
+    color: "gray",
+  },
+  order_total: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  order_total_text: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  total_price: {
+    fontSize: 16,
+    color: "#C60C30",
+    fontWeight: "bold",
+  },
+  payment_method: {
+    backgroundColor: "#FFF",
+    padding: 8,
+    borderColor: "#D0D0D0",
+    borderWidth: 1,
+    marginTop: 10,
+  },
+  payment_method_text: {
+    fontSize: 16,
+    color: "gray",
+  },
+  payment_delivery: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginTop: 7,
+  },
+  accept: {
+    backgroundColor: "#FFC72C",
+    padding: 10,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+  },
+});

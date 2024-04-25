@@ -16,6 +16,7 @@ const jwt = require("jsonwebtoken");
 
 mongoose
   .connect(
+    // "mongodb+srv://nguyencongtuanuit:congtuan@cluster0.5os0kco.mongodb.net/",
     "mongodb+srv://nguyencongtuanuit:congtuan@cluster0.5os0kco.mongodb.net/",
     {
       useNewUrlParser: true,
@@ -89,12 +90,10 @@ app.post("/register", async (req, res) => {
 
     // send verification email to the user
     sendVerificationEmail(newUser.email, newUser.verificationToken);
-    res
-      .status(201)
-      .json({
-        message:
-          "Registration successfull. Please check your email for verification",
-      });
+    res.status(201).json({
+      message:
+        "Registration successfull. Please check your email for verification",
+    });
   } catch (error) {
     console.log("Error registering user", error);
     res.status(500).json({ message: "Registration failed!" });
@@ -219,12 +218,12 @@ app.post("/orders", async (req, res) => {
       products: products,
       totalPrice: totalPrice,
       shippingAddress: shippingAddress,
-      paymentMethod: paymentMethod
-    })
+      paymentMethod: paymentMethod,
+    });
 
-    await order.save()
+    await order.save();
 
-    res.status(200).json({message: "Order created successfully!"})
+    res.status(200).json({ message: "Order created successfully!" });
   } catch (error) {
     console.log("Error creating orders: ", error);
     res.status(500).json({ message: "Error creating orders" });
@@ -232,34 +231,34 @@ app.post("/orders", async (req, res) => {
 });
 
 // get the user profile
-app.get("/profile/:userId", async(req,res) => {
+app.get("/profile/:userId", async (req, res) => {
   try {
-    const userId = req.params.userId
+    const userId = req.params.userId;
 
-    const user = await User.findById(userId)
+    const user = await User.findById(userId);
 
-    if(!user){
-      res.status(404).json({message: "User not found"})
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
     }
 
-    res.status(200).json({user})
+    res.status(200).json({ user });
   } catch (error) {
-    res.status(500).json({message: "Error retrieving the user profile"})
+    res.status(500).json({ message: "Error retrieving the user profile" });
   }
-})
+});
 
-app.get("/orders/:userId", async(req,res) => {
+app.get("/orders/:userId", async (req, res) => {
   try {
-    const userId = req.params.userId
+    const userId = req.params.userId;
 
-    const orders = await Order.find({user:userId}).populate("user")
+    const orders = await Order.find({ user: userId }).populate("user");
 
-    if(!orders || orders.length === 0){
-      return res.status(404).json({message:"No orders found for this user"})
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "No orders found for this user" });
     }
 
-    res.status(200).json({orders})
+    res.status(200).json({ orders });
   } catch (error) {
-    res.status(500).json({message: "Error"})
+    res.status(500).json({ message: "Error" });
   }
-})
+});

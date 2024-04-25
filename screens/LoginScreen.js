@@ -82,7 +82,7 @@ const LoginScreen = () => {
               color: "#041E42",
             }}
           >
-            Login In to your Account
+            Login your account
           </Text>
         </View>
 
