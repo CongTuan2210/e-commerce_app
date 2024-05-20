@@ -25,6 +25,7 @@ import { BottomModal, ModalContent, SlideAnimation } from "react-native-modals";
 import { UserType } from "../UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { decode } from "base-64";
+import useCartStore from "../zustand/CartStore";
 
 global.atob = decode;
 
@@ -205,7 +206,7 @@ const HomeScreen = () => {
   const [open, setOpen] = useState(false);
   const [addresses, setAddresses] = useState([]);
   const { userId, setUserId } = useContext(UserType);
-  const [selectedAddress, setSelectedAddress] = useState("")
+  const [selectedAddress, setSelectedAddress] = useState("");
   const [category, setCategory] = useState("jewelery");
   const [items, setItems] = useState([
     { label: "Men's clothing", value: "men's clothing" },
@@ -227,7 +228,8 @@ const HomeScreen = () => {
   const onGenderOpen = useCallback(() => {
     setCompanyOpen(false);
   }, []);
-  const cart = useSelector((state) => state.cart.cart);
+  // const cart = useSelector((state) => state.cart.cart);
+  const { cart } = useCartStore();
   const [modalVisible, setModalVisible] = useState(false);
   useEffect(() => {
     if (userId) {
@@ -255,7 +257,10 @@ const HomeScreen = () => {
     fetchUser();
   }, []);
 
-  console.log("addresses: ", addresses);
+  useEffect(() => {
+    console.log("cart zustand: ", cart);
+  }, [cart]);
+
   return (
     <>
       <SafeAreaView
@@ -311,10 +316,14 @@ const HomeScreen = () => {
             <EvilIcons name="location" size={24} color="black" />
             <TouchableOpacity>
               {selectedAddress ? (
-                <Text style={{fontSize:13, fontWeight:"bold"}}>Deliver to {selectedAddress?.name} - {selectedAddress?.street}</Text>
+                <Text style={{ fontSize: 13, fontWeight: "bold" }}>
+                  Deliver to {selectedAddress?.name} - {selectedAddress?.street}
+                </Text>
               ) : (
-                <Text style={{fontSize:13,fontWeight:"bold"}}>Add a Address</Text>
-              )} 
+                <Text style={{ fontSize: 13, fontWeight: "bold" }}>
+                  Add a Address
+                </Text>
+              )}
             </TouchableOpacity>
             <MaterialIcons name="keyboard-arrow-down" size={24} color="black" />
           </TouchableOpacity>
@@ -557,7 +566,8 @@ const HomeScreen = () => {
                   gap: 3,
                   marginRight: 15,
                   marginTop: 10,
-                  backgroundColor:selectedAddress === item ? "#FBCEB1" : "#FFF"
+                  backgroundColor:
+                    selectedAddress === item ? "#FBCEB1" : "#FFF",
                 }}
               >
                 <View

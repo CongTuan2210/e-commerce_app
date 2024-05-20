@@ -12,7 +12,7 @@ const ChatBubble = ({ role, text, onSpeech }) => {
     >
       {role === "model" && (
         <TouchableOpacity onPress={onSpeech} style={styles.speakerIcon}>
-            <Ionicons name="volume-high-outline" size={24} color='#fff'/>
+            <Ionicons name="volume-high-outline" size={24} color='#000'/>
         </TouchableOpacity>
       )}
       <Text style={ role === "user" ? styles.userText : styles.botText}>{text}</Text>
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   },
   modelChatItem: {
     alignSelf: "flex-start",
-    backgroundColor: "#000",
+    backgroundColor: '#f3f3f3',
   },
   userText: {
     fontSize: 16,
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   },
   botText: {
     fontSize: 16,
-    color: "#fff",
+    color: "#000",
     marginTop: 20,
   },
   speakerIcon: {

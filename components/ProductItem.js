@@ -2,14 +2,20 @@ import { StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
 // import addItemToCart from
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../redux/CartReducer";
+// import { addToCart } from "../redux/CartReducer";
+import useCartStore from "../zustand/CartStore";
 
 const ProductItem = ({ item }) => {
   const [addedToCart, setAddedToCart] = useState(false);
+  // 
+  const { addToCart } = useCartStore()
+  // 
   const dispatch = useDispatch();
   const addItemToCart = (item) => {
     setAddedToCart(true);
-    dispatch(addToCart(item));
+    // dispatch(addToCart(item));
+    addToCart(item)
+    // addTocartStore(item)
     setTimeout(() => {
       setAddedToCart(false);
     }, 60000);

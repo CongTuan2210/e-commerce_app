@@ -13,9 +13,11 @@ import { Entypo, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { cleanCart } from "../redux/CartReducer";
+import useCartStore from "../zustand/CartStore";
 // import RazorpayCheckout from "react-native-razorpay"
 
 const ConfirmationScreen = () => {
+  const {totalPrice, cleanCart, cart} = useCartStore()
   const steps = [
     { title: "Address", content: "Address Form" },
     { title: "Delivery", content: "Delivery Options" },
@@ -42,18 +44,18 @@ const ConfirmationScreen = () => {
   const [selectedAddress, setSelectedAddress] = useState("");
   const [option, setOption] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
-  const cart = useSelector((state) => state.cart.cart);
-  const total = cart
-    ?.map((item) => item.price * item.quantity)
-    .reduce((curr, prev) => curr + prev, 0);
+  // const cart = useSelector((state) => state.cart.cart);
+  // const total = cart
+  //   ?.map((item) => item.price * item.quantity)
+  //   .reduce((curr, prev) => curr + prev, 0);
   const navigation = useNavigation();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const handlePlaceOrder = async () => {
     try {
       const orderData = {
         userId: userId,
         cartItems: cart,
-        totalPrice: total,
+        totalPrice: totalPrice(),
         shippingAddress: selectedAddress,
         paymentMethod: selectedOption,
       };
@@ -64,7 +66,9 @@ const ConfirmationScreen = () => {
       );
       if (response.status === 200) {
         navigation.navigate("Order");
-        dispatch(cleanCart());
+        cleanCart()
+        // dispatch(cleanCart());
+
         console.log("Order created successfully", response.data.order);
       } else {
         console.log("Error creating order: ", response.data);
@@ -307,7 +311,9 @@ const ConfirmationScreen = () => {
           </View>
 
           <TouchableOpacity
-            onPress={() => setCurrentStep(3)}
+            onPress={() => {
+              selectedOption !== '' && setCurrentStep(3)
+              }}
             style={styles.btn_continue}
           >
             <Text>Continue</Text>
@@ -341,7 +347,7 @@ const ConfirmationScreen = () => {
 
             <View style={styles.info_item}>
               <Text style={styles.items}>Items</Text>
-              <Text style={styles.ship_total}>${total}</Text>
+              <Text style={styles.ship_total}>${totalPrice()}</Text>
             </View>
 
             <View style={styles.delivery_money}>
@@ -351,7 +357,7 @@ const ConfirmationScreen = () => {
 
             <View style={styles.order_total}>
               <Text style={styles.order_total_text}>Order Total</Text>
-              <Text style={styles.total_price}>${total}</Text>
+              <Text style={styles.total_price}>${totalPrice()}</Text>
             </View>
           </View>
 
@@ -361,10 +367,7 @@ const ConfirmationScreen = () => {
             <Text style={styles.payment_delivery}>Pay on delivery (Cash)</Text>
           </View>
 
-          <TouchableOpacity
-            onPress={handlePlaceOrder}
-            style={styles.accept}
-          >
+          <TouchableOpacity onPress={handlePlaceOrder} style={styles.accept}>
             <Text>Place your order</Text>
           </TouchableOpacity>
         </View>

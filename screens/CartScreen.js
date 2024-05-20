@@ -11,28 +11,35 @@ import { Feather, AntDesign } from "@expo/vector-icons";
 
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  decrementQuantity,
-  incrementQuantity,
-  removeFromCart,
-} from "../redux/CartReducer";
+// import {
+//   decrementQuantity,
+//   incrementQuantity,
+//   removeFromCart,
+// } from "../redux/CartReducer";
 import { useNavigation } from "@react-navigation/native";
+import useCartStore from "../zustand/CartStore";
 
 const CartScreen = () => {
+  // 
+  const {cart,totalPrice, incrementQuantity, decrementQuantity, removeFromCart} = useCartStore()
+  // 
   const navigation = useNavigation();
-  const cart = useSelector((state) => state.cart.cart);
-  const total = cart
-    ?.map((item) => item.price * item.quantity)
-    .reduce((curr, prev) => curr + prev, 0);
+  // const cart = useSelector((state) => state.cart.cart);
+  // const total = cart
+  //   ?.map((item) => item.price * item.quantity)
+  //   .reduce((curr, prev) => curr + prev, 0);
   const dispatch = useDispatch();
   const increaseQuantity = (item) => {
-    dispatch(incrementQuantity(item));
+    // dispatch(incrementQuantity(item));
+    incrementQuantity(item)
   };
   const decreaseQuantity = (item) => {
-    dispatch(decrementQuantity(item));
+    // dispatch(decrementQuantity(item));
+    decrementQuantity(item)
   };
   const deleteItem = (item) => {
-    dispatch(removeFromCart(item));
+    // dispatch(removeFromCart(item));
+    removeFromCart(item)
   };
   return (
     <ScrollView style={styles.container}>
@@ -52,16 +59,19 @@ const CartScreen = () => {
 
       <View style={styles.calculate}>
         <Text style={styles.subtotal_text}>Subtotal: </Text>
-        <Text style={styles.total_text}>{total}</Text>
+        <Text style={styles.total_text}>{totalPrice()}</Text>
       </View>
 
       <Text style={styles.emi_detail_text}>EMI details Available</Text>
 
       <TouchableOpacity
-        onPress={() => navigation.navigate("Confirm")}
+        onPress={() => {
+          totalPrice() > 0 && navigation.navigate("Confirm")
+          }}
         style={styles.quantity_item}
       >
         <Text>Proceed to Buy ({cart.length}) items</Text>
+        {/* <Text>Proceed to Buy () items</Text> */}
       </TouchableOpacity>
 
       <Text style={styles.text} />
