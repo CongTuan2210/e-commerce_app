@@ -57,25 +57,6 @@ const CartScreen = () => {
         <Feather name="mic" size={24} color="black" />
       </View>
 
-      <View style={styles.calculate}>
-        <Text style={styles.subtotal_text}>Subtotal: </Text>
-        <Text style={styles.total_text}>{totalPrice()}</Text>
-      </View>
-
-      <Text style={styles.emi_detail_text}>EMI details Available</Text>
-
-      <TouchableOpacity
-        onPress={() => {
-          totalPrice() > 0 && navigation.navigate("Confirm")
-          }}
-        style={styles.quantity_item}
-      >
-        <Text>Proceed to Buy ({cart.length}) items</Text>
-        {/* <Text>Proceed to Buy () items</Text> */}
-      </TouchableOpacity>
-
-      <Text style={styles.text} />
-
       <View style={styles.cart_container}>
         {cart?.map((item, index) => (
           <View style={styles.cart_item} key={index}>
@@ -142,18 +123,22 @@ const CartScreen = () => {
                 <Text>Delete</Text>
               </TouchableOpacity>
             </TouchableOpacity>
-
-            <View style={styles.save_later_btn}>
-              <TouchableOpacity style={styles.later_btn}>
-                <Text>Save For Later</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.later_btn}>
-                <Text>See More Like This</Text>
-              </TouchableOpacity>
-            </View>
           </View>
         ))}
       </View>
+      <View style={styles.calculate}>
+        <Text style={styles.subtotal_text}>Subtotal: </Text>
+        <Text style={styles.total_text}>{totalPrice()}</Text>
+      </View>
+      <TouchableOpacity
+        onPress={() => {
+          totalPrice() > 0 && navigation.navigate("Confirm")
+          }}
+        style={styles.quantity_item}
+      >
+        <Text>Proceed to Buy ({cart.length}) items</Text>
+      </TouchableOpacity>
+      <Text style= {{marginTop: 20}}></Text>
     </ScrollView>
   );
 };
@@ -190,6 +175,7 @@ const styles = StyleSheet.create({
   subtotal_text: {
     fontSize: 18,
     fontWeight: "400",
+    marginLeft: '30%',
   },
   total_text: {
     fontSize: 18,
@@ -232,12 +218,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   cart_item_img: {
-    height: 140,
-    width: 140,
+    marginLeft: 20,
+    height: 70,
+    width: 70,
     resizeMode: "contain",
   },
   cart_item_title: {
-    width: 150,
+    width: 220,
     marginTop: 10,
   },
   cart_item_price: {
