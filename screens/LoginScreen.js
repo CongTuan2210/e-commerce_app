@@ -17,8 +17,8 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("nguyencongtuanuit2210@gmail.com");
+  const [password, setPassword] = useState("congtuan");
   const navigation = useNavigation()
   const [loading, setLoading] = useState(true)
   // useEffect(() => {

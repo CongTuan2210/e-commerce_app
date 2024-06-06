@@ -1,4 +1,4 @@
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity, Alert } from "react-native";
 import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
@@ -6,7 +6,6 @@ import axios from "axios";
 import { UserType } from "../UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ChatBot from "../chatbot/modal/ChatBot";
-
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const { userId, setUserId } = useContext(UserType);
@@ -58,9 +57,34 @@ const ProfileScreen = () => {
     };
     fetchUserProfile();
   }, []);
+
+
+
+  // const logout = () => {
+  //   clearAuthToken();
+  // };
   const logout = () => {
-    clearAuthToken();
-  };
+    Alert.alert(
+      'Confirmation',
+      'Are you sure you want to log out?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Logout',
+          onPress: () => {
+            clearAuthToken();
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  }
+
+
+
   const clearAuthToken = async () => {
     await AsyncStorage.removeItem("authToken");
     console.log("Auth token cleared");
@@ -89,11 +113,39 @@ const ProfileScreen = () => {
           visible={modalVisible}
           onRequestClose={() => setModalVisible(!modalVisible)}
         />
-
-        <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+        <Image
+        source={{ uri: 'https://gcs.tripi.vn/public-tripi/tripi-feed/img/474308TQo/photo-10-16536250469001766985704.jpg' }}
+        style={{ height: 50, width: 50 , borderRadius: 20, marginLeft:'45%'
+        }}
+        />
+        <Text style={{ fontSize: 16, fontWeight: "bold", marginLeft:'32%' }}>
           Welcome {user?.name}
         </Text>
-
+        
+        <View
+          style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 60,
+          marginTop: 20,
+          marginLeft: "auto",
+          marginRight: "auto",
+          }}
+        >
+            <TouchableOpacity>
+                <Ionicons name="briefcase-outline" size={24} color="black" style = {{textAlign: 'center'}}/>
+                <Text style={{ textAlign: "center" }}>To Pay</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+                <Ionicons name="bus-outline" size={24} color="black" style = {{textAlign: 'center'}}/>
+                <Text style={{ textAlign: "center" }}>To Receive</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+                <Ionicons name="star-outline" size={24} color="black" style = {{textAlign: 'center'}}/>
+                <Text style={{ textAlign: "center" }}>To Rating</Text>
+            </TouchableOpacity>
+        </View>
+        
         <View
           style={{
             flexDirection: "row",
@@ -102,61 +154,7 @@ const ProfileScreen = () => {
             marginTop: 12,
           }}
         >
-          <TouchableOpacity
-            style={{
-              padding: 10,
-              backgroundColor: "#E0E0E0",
-              borderRadius: 25,
-              flex: 1,
-            }}
-          >
-            <Text style={{ textAlign: "center" }}>Your Orders</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={{
-              padding: 10,
-              backgroundColor: "#E0E0E0",
-              borderRadius: 25,
-              flex: 1,
-            }}
-          >
-            <Text style={{ textAlign: "center" }}>Your Account</Text>
-          </TouchableOpacity>
         </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 10,
-            marginTop: 12,
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              padding: 10,
-              backgroundColor: "#E0E0E0",
-              borderRadius: 25,
-              flex: 1,
-            }}
-          >
-            <Text style={{ textAlign: "center" }}>Buy again</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={logout}
-            style={{
-              padding: 10,
-              backgroundColor: "#E0E0E0",
-              borderRadius: 25,
-              flex: 1,
-            }}
-          >
-            <Text style={{ textAlign: "center" }}>Log out</Text>
-          </TouchableOpacity>
-        </View>
-
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {loading ? (
             <Text>Loading...</Text>
@@ -175,7 +173,6 @@ const ProfileScreen = () => {
                 }}
                 key={order._id}
               >
-                {/* Render the order information here */}
                 {order.products.slice(0, 1)?.map((product) => (
                   <View style={{ marginVertical: 10 }} key={product._id}>
                     <Image
@@ -190,6 +187,18 @@ const ProfileScreen = () => {
             <Text>No orders found</Text>
           )}
         </ScrollView>
+        <TouchableOpacity
+            onPress={logout}
+            style={{
+              padding: 10,
+              margin: 20,
+              backgroundColor: "#E0E0E0",
+              borderRadius: 25,
+              flex: 1,
+            }}
+          >
+            <Text style={{ textAlign: "center" }}>Log out</Text>
+          </TouchableOpacity>
       </ScrollView>
 
       <View

@@ -26,7 +26,7 @@ import { UserType } from "../UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { decode } from "base-64";
 import useCartStore from "../zustand/CartStore";
-
+import ChatBot from "../chatbot/modal/ChatBot";
 global.atob = decode;
 
 const jwt_decode = require("jwt-decode").jwtDecode;
@@ -263,6 +263,10 @@ const HomeScreen = () => {
 
   return (
     <>
+      <ChatBot
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(!modalVisible)}
+      />
       <SafeAreaView
         style={{
           paddingTop: Platform.OS === "android" ? 40 : 0,
@@ -660,6 +664,37 @@ const HomeScreen = () => {
           </View>
         </ModalContent>
       </BottomModal>
+
+      <View
+        style={{
+          width: 100,
+          height: 100,
+          justifyContent: "center",
+          alignItems: "center",
+          position: "absolute",
+          bottom: 0,
+          right: 0,
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => setModalVisible(true)}
+          style={{
+            width: 70,
+            height: 70,
+            backgroundColor: "#F2F2F2",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 100,
+          }}
+        >
+          <Image
+            style={{ width: 50, height: 50 }}
+            source={require("../chatbot/chaticon/chaticon.png")}
+          />
+        </TouchableOpacity>
+      </View>
+
+
     </>
   );
 };

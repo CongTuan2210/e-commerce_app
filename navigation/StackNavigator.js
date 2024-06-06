@@ -40,21 +40,6 @@ const StackNavigator = () => {
           }}
         />
         <Tab.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={{
-            tabBarLabel: "Profile",
-            tabBarLabelStyle: { color: "#008E97" },
-            // headerShown: false,
-            tabBarIcon: ({ focused }) =>
-              focused ? (
-                <Ionicons name="person" size={24} color="#008E97" />
-              ) : (
-                <Ionicons name="person-outline" size={24} color="black" />
-              ),
-          }}
-        />
-        <Tab.Screen
           name="Cart"
           component={CartScreen}
           options={{
@@ -66,6 +51,21 @@ const StackNavigator = () => {
                 <Entypo name="shopping-cart" size={24} color="#008E97" />
               ) : (
                 <AntDesign name="shoppingcart" size={24} color="black" />
+              ),
+          }}
+        />
+        <Tab.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            tabBarLabel: "Profile",
+            tabBarLabelStyle: { color: "#008E97" },
+            // headerShown: false,
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Ionicons name="person" size={24} color="#008E97" />
+              ) : (
+                <Ionicons name="person-outline" size={24} color="black" />
               ),
           }}
         />
