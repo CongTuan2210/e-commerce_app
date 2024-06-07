@@ -262,3 +262,60 @@ app.get("/orders/:userId", async (req, res) => {
     res.status(500).json({ message: "Error" });
   }
 });
+
+//
+app.put("/orders/:orderId/products/:productId", async (req, res) => {
+  try {
+    const { orderId, productId } = req.params;
+
+    // Tìm đơn hàng bằng orderId
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+    }
+
+    // In ra các sản phẩm trước khi xóa
+    console.log("Products before delete:", order.products);
+
+    // Tìm sản phẩm cần xóa
+    const productToDelete = order.products.find(
+        (product) => product._id.toString() === productId
+    );
+
+    if (!productToDelete) {
+      return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
+    }
+
+    // Lọc ra sản phẩm cần xóa
+    order.products = order.products.filter(
+        (product) => product._id.toString() !== productId
+    );
+
+    // Cập nhật lại totalPrice
+    order.totalPrice -= productToDelete.price * productToDelete.quantity;
+
+    // In ra các sản phẩm sau khi xóa
+    console.log("Products after delete:", order.products);
+
+    if (order.products.length === 0) {
+      // Nếu không còn sản phẩm nào, xóa đơn hàng
+      await Order.findByIdAndDelete(orderId);
+      return res
+          .status(200)
+          .json({ message: "Đơn hàng đã được xóa thành công" });
+    } else {
+      // Lưu đơn hàng đã được cập nhật
+      await order.save();
+      return res
+          .status(200)
+          .json({
+            message: "Sản phẩm đã được xóa khỏi đơn hàng thành công",
+            order,
+          });
+    }
+  } catch (error) {
+    console.log("Lỗi khi cập nhật đơn hàng: ", error);
+    res.status(500).json({ message: "Lỗi khi cập nhật đơn hàng" });
+  }
+});
+
